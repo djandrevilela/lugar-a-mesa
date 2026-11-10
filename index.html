@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-PT" data-theme="agua">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lugar à Mesa — Organizador de Mesas de Casamento e Batizado</title>
+<meta name="description" content="Lugar à Mesa: organiza as mesas do teu casamento ou batizado. Free table planner for weddings and christenings. Organizador de mesas para bodas y bautizos.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>Lugar à Mesa</h1>
+      <p data-i18n="brand.sub"></p>
+    </div>
+    <label class="evt"><span class="sr" data-i18n="evt.label"></span>
+      <input id="eventName" data-i18n-ph="evt.ph" maxlength="80" autocomplete="off">
+    </label>
+    <div class="stats" id="stats" aria-live="polite"></div>
+    <div class="tools">
+      <div class="seg" role="group" data-i18n-aria="names.aria">
+        <button data-names="full" aria-pressed="true" data-i18n="names.full"></button>
+        <button data-names="short" aria-pressed="false" data-i18n="names.short"></button>
+      </div>
+      <button class="btn" id="btnUndo" title="Ctrl/Cmd + Z" data-i18n="undo"></button>
+      <button class="btn" id="btnAdd" data-i18n="addTable"></button>
+      <button class="btn" id="btnFiles" data-i18n="files"></button>
+      <button class="btn" id="btnOpts" data-i18n="options"></button>
+      <select id="lang" class="lang" data-i18n-aria="lang.aria">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+      <div class="themes" id="themes" role="group" data-i18n-aria="themes.aria">
+        <button data-theme="agua" style="--sw:#2F6C95" data-i18n-title="theme.agua" data-i18n-aria="theme.agua"></button>
+        <button data-theme="salvia" style="--sw:#3B7A58" data-i18n-title="theme.salvia" data-i18n-aria="theme.salvia"></button>
+        <button data-theme="rosa" style="--sw:#A24A68" data-i18n-title="theme.rosa" data-i18n-aria="theme.rosa"></button>
+        <button data-theme="lavanda" style="--sw:#5A4DA3" data-i18n-title="theme.lavanda" data-i18n-aria="theme.lavanda"></button>
+        <button data-theme="noite" style="--sw:#1E2832" data-i18n-title="theme.noite" data-i18n-aria="theme.noite"></button>
+      </div>
+      <button class="btn primary" id="btnPrint" data-i18n="print"></button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="side" id="pool" data-i18n-aria="side.aria">
+      <div class="side-head">
+        <h2><span data-i18n="side.title"></span> <span id="poolCount"></span></h2>
+        <div class="side-actions">
+          <button class="btn" data-act="addguest" data-i18n="side.add"></button>
+          <button class="btn" data-act="importxlsx" data-i18n="side.import"></button>
+        </div>
+        <input class="search" id="search" type="search" data-i18n-ph="search.ph" data-i18n-aria="search.ph" autocomplete="off">
+        <div class="filters" id="filters">
+          <button class="fbtn" data-f="all" aria-pressed="true" data-i18n="f.all"></button>
+          <button class="fbtn" data-f="a" aria-pressed="false" data-i18n="f.a"></button>
+          <button class="fbtn" data-f="k" aria-pressed="false" data-i18n="f.k"></button>
+          <button class="fbtn" data-f="b" aria-pressed="false" data-i18n="f.b"></button>
+          <button class="fbtn" data-f="diet" aria-pressed="false" data-i18n="f.diet"></button>
+        </div>
+        <div class="sortrow">
+          <span data-i18n="sort.label"></span>
+          <div class="seg small" role="group" data-i18n-aria="sort.aria">
+            <button data-sort="list" aria-pressed="true" data-i18n="sort.list"></button>
+            <button data-sort="az" aria-pressed="false" data-i18n="sort.az"></button>
+          </div>
+        </div>
+      </div>
+      <div id="poolList"></div>
+      <div class="side-foot"><div class="legend" id="sideLegend"></div></div>
+    </aside>
+
+    <section class="stage" id="stage">
+      <div class="hint" id="hint" hidden></div>
+      <div id="printHead"><h2 id="printTitle"></h2><div class="legend" id="printLegend"></div></div>
+      <div class="roomwrap">
+        <div class="edge top"><button data-edge="top-add" data-i18n="edge.topAdd"></button><button data-edge="top-del" data-i18n="edge.rowDel" data-i18n-title="edge.rowDelTitle"></button></div>
+        <div class="edge left"><button data-edge="left-add" data-i18n="edge.leftAdd"></button><button data-edge="left-del" data-i18n="edge.colDel" data-i18n-title="edge.colDelTitle"></button></div>
+        <div class="fit"><div class="room" id="room"></div></div>
+        <div class="edge right"><button data-edge="right-add" data-i18n="edge.rightAdd"></button><button data-edge="right-del" data-i18n="edge.colDel" data-i18n-title="edge.colDelTitle"></button></div>
+        <div class="edge bottom"><button data-edge="bottom-add" data-i18n="edge.bottomAdd"></button><button data-edge="bottom-del" data-i18n="edge.rowDel" data-i18n-title="edge.rowDelTitle"></button></div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot" id="siteFooter" data-i18n-aria="ft.aria">
+    <div class="foot-panel" id="footPanel" hidden>
+      <div class="foot-grid">
+        <div>
+          <div class="foot-brand">🍽️ Lugar à Mesa</div>
+          <p class="foot-p" data-i18n="ft.about"></p>
+          <div class="badges"><span class="badge">v1.0.0</span><span class="badge">PT · EN · ES</span><span class="badge">MIT</span></div>
+        </div>
+        <div>
+          <div class="foot-h" data-i18n="ft.dev"></div>
+          <a class="gh" href="https://github.com/djandrevilela" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            <span>GitHub</span>
+          </a>
+          <p class="foot-p" data-i18n="ft.contact"></p>
+        </div>
+        <div>
+          <div class="foot-h" data-i18n="ft.how"></div>
+          <ul class="foot-list">
+            <li data-i18n="ft.how1"></li><li data-i18n="ft.how2"></li><li data-i18n="ft.how3"></li><li data-i18n="ft.how4"></li>
+          </ul>
+        </div>
+        <div>
+          <div class="foot-h" data-i18n="ft.support"></div>
+          <p class="foot-p" data-i18n="ft.supportDesc"></p>
+          <a class="kofi" href="https://ko-fi.com/djandrevilela" target="_blank" rel="noopener">☕ <span data-i18n="ft.kofi"></span></a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <p data-i18n="ft.disclaimer"></p>
+        <p>MIT · <a href="https://github.com/djandrevilela/lugar-a-mesa" target="_blank" rel="noopener" data-i18n="ft.source"></a></p>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span class="foot-name">Lugar à Mesa</span><span class="badge">v1.0.0</span>
+      <span class="grow"></span>
+      <button class="btn small" id="footToggle" aria-expanded="false" aria-controls="footPanel">ℹ <span data-i18n="ft.toggle"></span></button>
+      <a class="gh" href="https://github.com/djandrevilela/lugar-a-mesa" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+      <a class="kofi" href="https://ko-fi.com/djandrevilela" target="_blank" rel="noopener">☕ <span data-i18n="ft.kofi"></span></a>
+    </div>
+  </footer>
+</div>
+
+<!-- Adicionar / editar pessoa -->
+<dialog id="dlgGuest">
+  <form id="fGuest" autocomplete="off">
+    <h2 id="gTitle"></h2>
+    <label><span data-i18n="g.name"></span>
+      <input id="gName" required maxlength="80">
+    </label>
+    <label><span data-i18n="g.age"></span>
+      <select id="gAge"><option value="a" data-i18n="age.a"></option><option value="k" data-i18n="age.k"></option><option value="b" data-i18n="age.b"></option></select>
+    </label>
+    <label><span data-i18n="g.diet"></span>
+      <input id="gDiet" list="dietList" maxlength="60">
+    </label>
+    <datalist id="dietList"></datalist>
+    <div class="dlg-actions">
+      <button type="button" class="btn danger" id="gDelete" hidden data-i18n="g.delete"></button>
+      <span class="grow"></span>
+      <button type="button" class="btn" id="gClose" data-i18n="g.close"></button>
+      <button type="submit" class="btn primary" id="gSave"></button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Ficheiros -->
+<dialog id="dlgFiles">
+  <h2 data-i18n="fl.title"></h2>
+  <h3 data-i18n="fl.guests"></h3>
+  <div class="btn-row">
+    <button class="btn" data-act="template" data-i18n="fl.template"></button>
+    <button class="btn" data-act="importxlsx" data-i18n="fl.import"></button>
+  </div>
+  <p class="help" data-i18n="fl.cols"></p>
+  <h3 data-i18n="fl.json"></h3>
+  <div class="btn-row">
+    <button class="btn" data-act="exportjson" data-i18n="fl.exportJson"></button>
+    <button class="btn" data-act="importjson" data-i18n="fl.importJson"></button>
+  </div>
+  <p class="help" data-i18n="fl.jsonHelp"></p>
+  <h3 data-i18n="fl.list"></h3>
+  <div class="btn-row">
+    <button class="btn" data-act="exportxlsx" data-i18n="fl.excel"></button>
+    <button class="btn" data-act="exportdocx" data-i18n="fl.word"></button>
+    <button class="btn" data-act="exportpdf" data-i18n="fl.pdf"></button>
+  </div>
+  <h3 data-i18n="fl.fresh"></h3>
+  <div class="btn-row"><button class="btn danger" id="btnWipe"></button></div>
+  <p class="help" data-i18n="fl.local"></p>
+  <div class="dlg-actions"><span class="grow"></span><button class="btn" data-act="closedlg" data-i18n="fl.close"></button></div>
+</dialog>
+
+<!-- Importar Excel -->
+<dialog id="dlgImport">
+  <h2 data-i18n="imp.title"></h2>
+  <p id="impInfo"></p>
+  <div class="dlg-actions">
+    <button class="btn" data-act="closedlg" data-i18n="imp.cancel"></button>
+    <span class="grow"></span>
+    <button class="btn" id="impAppend" data-i18n="imp.append"></button>
+    <button class="btn primary" id="impReplace" data-i18n="imp.replace"></button>
+  </div>
+  <p class="help" data-i18n="imp.help"></p>
+</dialog>
+
+<!-- Opções -->
+<dialog id="dlgOpts">
+  <h2 data-i18n="o.title"></h2>
+  <div class="two">
+    <label><span data-i18n="o.min"></span><input id="oMin" type="number" min="1" max="30"></label>
+    <label><span data-i18n="o.max"></span><input id="oMax" type="number" min="1" max="30"></label>
+    <label><span data-i18n="o.main"></span><input id="oMain" type="number" min="1" max="30"></label>
+  </div>
+  <label><span data-i18n="o.orient"></span>
+    <select id="oOrient"><option value="auto" data-i18n="o.auto"></option><option value="landscape" data-i18n="o.land"></option><option value="portrait" data-i18n="o.port"></option></select>
+  </label>
+  <p class="help" data-i18n="o.help"></p>
+  <div class="dlg-actions"><span class="grow"></span><button class="btn primary" data-act="closedlg" data-i18n="fl.close"></button></div>
+</dialog>
+
+<input type="file" id="fileXlsx" accept=".xlsx,.xls,.csv" hidden>
+<input type="file" id="fileJson" accept=".json,application/json" hidden>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
